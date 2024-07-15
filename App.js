@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
+import { AppProvider } from './Framework/Components/GlobalVariables';
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -37,8 +38,10 @@ export default function App() {
     return null;
   }
   return (
-    <NavigationContainer>
-      <StackNavigator />
-    </NavigationContainer>
+    <AppProvider>
+      <NavigationContainer>
+        <StackNavigator />
+      </NavigationContainer>
+    </AppProvider>
   );
 }
