@@ -8,6 +8,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { AppContext } from '../Components/GlobalVariables';
 import { Formik } from 'formik';
+import * as yup from "yup"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../Firebase/Settings';
+
+const validation = yup.object({
+    email: yup.string().email("Invalid email").required("Email is required"),
+    password: yup.string().min(8, "Password must be at least 8 characters").required("Password is required"),
+    confirmPassword: yup.string().oneOf([yup.ref("password"), null], "Passwords must be the same")
+})
 
 function Home({ navigation }) {
     const { userUID, setUserUID, userImg } = useContext(AppContext)
@@ -22,30 +31,48 @@ function Home({ navigation }) {
             <Text>HomeScreen</Text>
             <Text>UID: {userUID}</Text>
             <Formik
-                initialValues={{ fname: "", lname: "", email: "", password: "" }}
+                initialValues={{ fname: "", lname: "", email: "", password: "", confirmPassword: "" }}
                 onSubmit={(value) => {
+                    // createUserWithEmailAndPassword(auth, value.email, value.password)
+                    signInWithEmailAndPassword(auth, value.email, value.password)
+                        .then(() => {
+                            console.log("Account created successfully")
+                            navigation.navigate("Profile")
+                        })
+                        .catch(e => console.log(e))
                     console.log(value);
                 }}
+                validationSchema={validation}
             >
                 {(prop) => {
                     return (
                         <View>
-
-                            <TextInput
-                                placeholder="First name"
-                                style={styles.input}
-                                onChangeText={prop.handleChange("fname")}
-                            />
-                            <TextInput
-                                placeholder="Last name"
-                                style={styles.input}
-                                onChangeText={prop.handleChange("lname")}
-                            />
                             <TextInput
                                 placeholder="Email name"
                                 style={styles.input}
                                 onChangeText={prop.handleChange("email")}
+                                onBlur={prop.handleBlur("email")}
+                                autoCapitalize='none'
                             />
+                            <Text style={{ color: "#903b3b", marginStart: 30, }}>{prop.errors.email}</Text>
+                            <TextInput
+                                placeholder="Last name"
+                                style={styles.input}
+                                onChangeText={prop.handleChange("password")}
+                                onBlur={prop.handleBlur("password")}
+                                autoCapitalize='none'
+                                autoComplete='off'
+                            />
+                            <Text style={{ color: "#903b3b", marginStart: 30, }}>{prop.errors.password}</Text>
+                            <TextInput
+                                placeholder="Email name"
+                                style={styles.input}
+                                onChangeText={prop.handleChange("confirmPassword")}
+                                onBlur={prop.handleBlur("confirmPassword")}
+                                autoCapitalize='none'
+                                autoComplete='off'
+                            />
+                            <Text style={{ color: "#903b3b", marginStart: 30, }}>{prop.errors.confirmPassword}</Text>
                             <AppButton onPress={prop.handleSubmit} >Edit Profile</AppButton>
                         </View>
                     )
