@@ -6,21 +6,17 @@ import { faApple, faFacebookF } from '@fortawesome/free-brands-svg-icons'
 import { Formik } from 'formik'
 import * as yup from "yup"
 import { AppButton } from '../Components/AppButton'
-import { auth, db } from '../Firebase/Settings';
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { collection, doc, setDoc } from 'firebase/firestore'
+import { auth } from '../Firebase/Settings';
+import { signInWithEmailAndPassword } from 'firebase/auth'
 import { AppContext } from '../Components/GlobalVariables'
 
 
-export function SignUp({ navigation }) {
+export function Login({ navigation }) {
     const { userUID, setUserUID, userImg } = useContext(AppContext)
 
     const validation = yup.object({
-        fname: yup.string().min(3).required("First name is required"),
-        lname: yup.string().min(3).required("Last name is required"),
         email: yup.string().email("Invalid email").required("Email is required"),
         password: yup.string().min(8, "Password must be at least 8 characters").required("Password is required"),
-        confirmPassword: yup.string().oneOf([yup.ref("password"), null], "Passwords must be the same")
     })
 
     return (
@@ -33,22 +29,14 @@ export function SignUp({ navigation }) {
 
 
                     <Formik
-                        initialValues={{ fname: "", lname: "", email: "", password: "", confirmPassword: "" }}
+                        initialValues={{ email: "", password: "" }}
                         onSubmit={(value) => {
-                            createUserWithEmailAndPassword(auth, value.email, value.password)
+                            signInWithEmailAndPassword(auth, value.email, value.password)
                                 .then((data) => {
                                     const { uid } = data.user;
                                     setUserUID(uid)
-                                    setDoc(doc(db, "users", uid), {
-                                        firstname: value.fname,
-                                        lastname: value.lname,
-                                        email: value.email,
-                                        userUID: uid,
-                                        dob: { day: "27", month: "09", year: "2017" },
-                                        dateCreated: new Date().getTime(),
-                                    }).then(() => {
-                                        navigation.navigate("HomeScreen")
-                                    }).catch(e => console.log(e))
+                                    // console.log("Account Login successfully")
+                                    navigation.navigate("HomeScreen")
                                 })
                                 .catch(e => console.log(e))
                             console.log(value);
@@ -59,30 +47,13 @@ export function SignUp({ navigation }) {
                             return (
                                 <View>
                                     <TextInput
-                                        placeholder='Enter First Name'
-                                        style={styles.textinput}
-                                        onChangeText={prop.handleChange("fname")}
-                                        onBlur={prop.handleBlur("fname")}
-                                        autoCapitalize='none'
-                                    />
-                                    <Text style={{ color: "#ff1212", marginStart: 10, marginBottom: 20 }}> {prop.errors.fname && prop.touched.fname} </Text>
-                                    <TextInput
-                                        placeholder='Enter Last Name'
-                                        style={styles.textinput}
-                                        onChangeText={prop.handleChange("lname")}
-                                        onBlur={prop.handleBlur("lname")}
-                                        autoCapitalize='none'
-                                    />
-                                    <Text style={{ color: "#ff1212", marginStart: 10, marginBottom: 20 }}> {prop.errors.lname && prop.touched.lname} </Text>
-
-                                    <TextInput
                                         placeholder='Enter Email'
                                         style={styles.textinput}
                                         onChangeText={prop.handleChange("email")}
                                         onBlur={prop.handleBlur("email")}
                                         autoCapitalize='none'
                                     />
-                                    <Text style={{ color: "#ff1212", marginStart: 10, marginBottom: 20 }}> {prop.errors.email && prop.touched.email} </Text>
+                                    <Text style={{ color: "#dbd3bc", marginStart: 20, }}> {prop.errors.email} </Text>
 
                                     <TextInput
                                         placeholder='Enter Password'
@@ -91,16 +62,7 @@ export function SignUp({ navigation }) {
                                         onBlur={prop.handleBlur("password")}
                                         autoCapitalize='none'
                                     />
-                                    <Text style={{ color: "#ff1212", marginStart: 10, marginBottom: 20 }}> {prop.touched.password && prop.errors.password} </Text>
-
-                                    <TextInput
-                                        placeholder='Enter Confirm Password'
-                                        style={styles.textinput}
-                                        onChangeText={prop.handleChange("confirmPassword")}
-                                        onBlur={prop.handleBlur("confirmPassword")}
-                                        autoCapitalize='none'
-                                    />
-                                    <Text style={{ color: "#ff1212", marginStart: 10, marginBottom: 20 }}> {prop.touched.confirmPassword && prop.errors.confirmPassword} </Text>
+                                    <Text style={{ color: "#dbd3bc", marginStart: 20, }}> {prop.errors.password} </Text>
 
                                     <AppButton onPress={prop.handleSubmit} >Login</AppButton>
                                 </View>

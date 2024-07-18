@@ -1,5 +1,5 @@
 import { Image, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { AppButton } from '../Components/AppButton';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Profile } from './Profile';
@@ -10,7 +10,8 @@ import { AppContext } from '../Components/GlobalVariables';
 import { Formik } from 'formik';
 import * as yup from "yup"
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../Firebase/Settings';
+import { auth, db } from '../Firebase/Settings';
+import { doc, getDoc } from 'firebase/firestore';
 
 const validation = yup.object({
     email: yup.string().email("Invalid email").required("Email is required"),
@@ -19,9 +20,15 @@ const validation = yup.object({
 })
 
 function Home({ navigation }) {
-    const { userUID, setUserUID, userImg } = useContext(AppContext)
+    const { userUID, setUserUID, setUserInfo, userInfo } = useContext(AppContext)
     const [visibility, setVisibility] = useState(false)
-    const uid = "7AFA94B1KJ35BJHBJ7GCHF8XFXF2G4__99_90";
+
+    useEffect(() => {
+        getDoc(doc(db, "users", userUID))
+            .then((data) => {
+                setUserInfo(data.data());
+            }).catch(e => console.log(e))
+    }, [])
 
 
     return (
@@ -29,7 +36,7 @@ function Home({ navigation }) {
             <Text style={styles.text}>Home</Text>
             {/* <Image source={userImg} style={{}} /> */}
             <Text>HomeScreen</Text>
-            <Text>UID: {userUID}</Text>
+            <Text>User: {userInfo.firstname} {userInfo.lastname}</Text>
             <Formik
                 initialValues={{ fname: "", lname: "", email: "", password: "", confirmPassword: "" }}
                 onSubmit={(value) => {
@@ -78,7 +85,7 @@ function Home({ navigation }) {
                     )
                 }}
             </Formik>
-            <AppButton onPress={() => setUserUID(uid)} >Profile</AppButton>
+            <AppButton onPress={() => setUserUID("")} >Profile</AppButton>
             <AppButton onPress={() => setVisibility(true)} >Modal</AppButton>
             <Modal
                 visible={visibility}

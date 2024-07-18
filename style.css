@@ -1,0 +1,36 @@
+.container {
+    border: 1px solid green;
+    padding: 5px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.content {
+    background-color: green;
+    color: white;
+    padding: 20px;
+    margin: 3px;
+}
+
+.content img {
+    width: 100%;
+}
+
+/* Tablet */
+@media (max-width:1600px) {
+    .container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+}
+
+/* Mobile */
+@media (max-width:640px) { 
+    .container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .content{
+        padding: 10px;
+    }
+}
+
