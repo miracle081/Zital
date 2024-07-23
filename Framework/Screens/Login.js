@@ -9,6 +9,7 @@ import { AppButton } from '../Components/AppButton'
 import { auth } from '../Firebase/Settings';
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { AppContext } from '../Components/GlobalVariables'
+import { getDoc } from 'firebase/firestore'
 
 
 export function Login({ navigation }) {
@@ -34,7 +35,8 @@ export function Login({ navigation }) {
                             signInWithEmailAndPassword(auth, value.email, value.password)
                                 .then((data) => {
                                     const { uid } = data.user;
-                                    setUserUID(uid)
+                                    setUserUID(uid);
+
                                     // console.log("Account Login successfully")
                                     navigation.navigate("HomeScreen")
                                 })

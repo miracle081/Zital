@@ -6,6 +6,10 @@ import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
 import { NavigationContainer } from '@react-navigation/native';
 import { AppProvider } from './Framework/Components/GlobalVariables';
+import {
+  Poppins_400Regular, Poppins_400Regular_Italic, Poppins_500Medium,
+  Poppins_500Medium_Italic, Poppins_600SemiBold, Poppins_600SemiBold_Italic, Poppins_700Bold, Poppins_700Bold_Italic
+} from '@expo-google-fonts/poppins';
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -13,6 +17,10 @@ export default function App() {
   useEffect(() => {
     async function prepare() {
       try {
+        await Font.loadAsync({ Poppins_400Regular });
+        await Font.loadAsync({ Poppins_400Regular_Italic });
+        await Font.loadAsync({ Poppins_500Medium });
+        await Font.loadAsync({ Poppins_500Medium_Italic, Poppins_600SemiBold, Poppins_600SemiBold_Italic, Poppins_700Bold, Poppins_700Bold_Italic });
         await Font.loadAsync({ Manrope_400Regular });
         await Font.loadAsync({ Manrope_700Bold });
         await Font.loadAsync({ Manrope_800ExtraBold });
